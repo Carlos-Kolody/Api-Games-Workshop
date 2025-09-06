@@ -1,59 +1,52 @@
 const express = require('express');
-
 const app = express();
-
 const PORT = 3000;
-
-app.get('/',(req,res) => {
-    res.send('Bem vindo ao teste!!!!');
-});
-
-app.get('/sobre',(req,res) => {
-    console.log("Essa Bomba é a evolução dos apps");
-});
 
 app.use(express.json());
 
-app.listen(PORT, () =>{
-    console.log(`Servidor rodando em http://localhost:${PORT}/sobre`);
-    console.log(`Para parar o servidor, pressione Ctrl + C no terminal`)
-}
-);
-
-const testes  = [
-    {
-    'id':testes,
-    'preco':1200
-    },
-    {
-        'id':testes,
-        'preco':7800
-    }
-];
-
-app.get('/api/produtos',(req,res) => {
-    res.json(testes);
-});
-
-let produtos = [
-  {id: 1, nome: 'Teclado Mecânico', preco: 450.00},
-  {id: 2, nome: 'Mouse Gamer', preco: 150.00},
-  {id: 3, nome: 'Montior UltraWide', preco: 1200.00}
-];
+let games = [
+  { id: 1, titulo: 'The Witcher 3: Wild Hunt', genero: 'RPG', classificacao: '16+', anoLancamento: 2015 },
+  { id: 2, titulo: 'Stardew Valley', genero: 'Simulação', classificacao: 'Livre', anoLancamento: 2016 },
+  { id: 3, titulo: 'Red Dead Redemption 2', genero: 'Ação-Aventura', classificacao: '18+', anoLancamento: 2018 },
+]; 
 
 let nextId = 4;
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log('Para parar o servidor, pressione Ctrl + C no terminal');
+app.get('/', (req, res) => {
+  res.send('API de Gerenciamento de Games no ar!');
 });
 
-app.post('/api/produtos', (req, res) => { 
-  const { nome, preco } = req.body;
-  if (!nome || !preco) {
-    return res.status(400).json({ error: 'Nome e preço são obrigatórios.' });
+app.get('/sobre', (req, res) => {
+  res.send("Este é um projeto de API para gerenciar uma coleção de games.");
+});
+
+
+app.get('/api/games', (req, res) => {
+  res.json(games);
+});
+
+app.post('/api/games', (req, res) => {
+
+  const { titulo, genero, classificacao, anoLancamento } = req.body;
+
+  if (!titulo || !genero || !classificacao || anoLancamento === undefined) {
+    return res.status(400).json({ message: 'Os campos titulo, genero, classificacao e anoLancamento são obrigatórios.' });
   }
-  const novoProduto = { id: nextId++, nome, preco };
-  produtos.push(novoProduto);
-  res.status(201).json(novoProduto);
+
+  const novoGame = { 
+    id: nextId++, 
+    titulo, 
+    genero, 
+    classificacao, 
+    anoLancamento 
+  };
+    
+  games.push(novoGame);
+ 
+  res.status(201).json(novoGame);
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
+  console.log(`Para parar o servidor, pressione Ctrl + C no terminal`);
 });
