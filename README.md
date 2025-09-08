@@ -6,6 +6,21 @@ Esta é uma API RESTful desenvolvida para a matéria de Backend, com o objetivo 
 
 ![Badge de Status do Projeto](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
 
+## Enunciado do Projeto 9: Catálogo de Jogos (Video Game Catalog API)
+Conforme sorteio feito em sala de aula, o projeto 9 ficou a cargo da equipe **Amantes de Kwid**:
+- Carlos Eduardo Corleto Kolody
+- Gabriel Augusto do Vale
+- João Victor Ferrari da Silva
+
+    • Descrição: Uma API para um catálogo de jogos de videogame, incluindo informações sobre plataforma e ano de lançamento.
+    • Recurso Principal: Jogo (com propriedades como id, titulo, plataforma, ano_lancamento, desenvolvedor).
+    • Exemplo de Endpoints:
+        ◦ GET /api/jogos
+        ◦ GET /api/jogos/:id
+        ◦ POST /api/jogos (requer autenticação e autorização admin)
+        ◦ PUT /api/jogos/:id (requer autenticação e autorização admin)
+        ◦ DELETE /api/jogos/:id (requer autenticação e autorização admin)
+
 ---
 
 ## 🚀 Funcionalidades Principais
