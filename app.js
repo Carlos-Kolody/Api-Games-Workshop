@@ -1,59 +1,97 @@
 const express = require('express');
-
 const app = express();
-
 const PORT = 3000;
-
-app.get('/',(req,res) => {
-    res.send('Bem vindo ao teste!!!!');
-});
-
-app.get('/sobre',(req,res) => {
-    console.log("Essa Bomba é a evolução dos apps");
-});
 
 app.use(express.json());
 
-app.listen(PORT, () =>{
-    console.log(`Servidor rodando em http://localhost:${PORT}/sobre`);
-    console.log(`Para parar o servidor, pressione Ctrl + C no terminal`)
-}
-);
-
-const testes  = [
-    {
-    'id':testes,
-    'preco':1200
-    },
-    {
-        'id':testes,
-        'preco':7800
-    }
+let jogos = [
+  { id: 1, titulo: 'The Legend of Zelda: Breath of the Wild', plataforma: 'Nintendo Switch', ano_lancamento: 2017, desenvolvedor: 'Nintendo' },
+  { id: 2, titulo: 'Red Dead Redemption 2', plataforma: 'PlayStation 4', ano_lancamento: 2018, desenvolvedor: 'Rockstar Games' },
+  { id: 3, titulo: 'Cyberpunk 2077', plataforma: 'PC', ano_lancamento: 2020, desenvolvedor: 'CD Projekt Red' }
 ];
+let nextId = 4; 
 
-app.get('/api/produtos',(req,res) => {
-    res.json(testes);
+app.get('/', (req, res) => {
+  res.send('Bem-vindo à API de Jogos!');
 });
 
-let produtos = [
-  {id: 1, nome: 'Teclado Mecânico', preco: 450.00},
-  {id: 2, nome: 'Mouse Gamer', preco: 150.00},
-  {id: 3, nome: 'Montior UltraWide', preco: 1200.00}
-];
 
-let nextId = 4;
+app.get('/api/jogos', (req, res) => {
+  res.json(jogos);
+});
+
+app.get('/api/jogos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const jogo = jogos.find(j => j.id === id);
+
+  if (jogo) {
+    res.json(jogo);
+  } else {
+    res.status(404).json({ message: 'Jogo não encontrado.' });
+  }
+});
+
+app.post('/api/jogos', (req, res) => {
+ 
+  const { titulo, plataforma, ano_lancamento, desenvolvedor } = req.body;
+
+  if (!titulo || !plataforma || !ano_lancamento || !desenvolvedor) {
+    return res.status(400).json({ message: 'Todos os campos (titulo, plataforma, ano_lancamento, desenvolvedor) são obrigatórios.' });
+  }
+
+  const novoJogo = {
+    id: nextId++,
+    titulo,
+    plataforma,
+    ano_lancamento,
+    desenvolvedor
+  };
+
+  jogos.push(novoJogo);
+  res.status(201).json(novoJogo); 
+});
+
+app.put('/api/jogos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const jogoIndex = jogos.findIndex(j => j.id === id);
+
+  if (jogoIndex !== -1) {
+    const { titulo, plataforma, ano_lancamento, desenvolvedor } = req.body;
+
+    if (!titulo && !plataforma && !ano_lancamento && !desenvolvedor) {
+      return res.status(400).json({ message: 'Pelo menos um campo deve ser fornecido para atualização.' });
+    }
+
+    const jogoAtualizado = {
+      ...jogos[jogoIndex], 
+      titulo: titulo || jogos[jogoIndex].titulo, 
+      plataforma: plataforma || jogos[jogoIndex].plataforma,
+      ano_lancamento: ano_lancamento || jogos[jogoIndex].ano_lancamento,
+      desenvolvedor: desenvolvedor || jogos[jogoIndex].desenvolvedor
+    };
+
+    jogos[jogoIndex] = jogoAtualizado;
+    res.json(jogoAtualizado);
+  } else {
+    res.status(404).json({ message: 'Jogo não encontrado para atualização.' });
+  }
+});
+
+
+app.delete('/api/jogos/:id', (req, res) => {
+  const id = parseInt(req.params.id);
+  const tamanhoInicial = jogos.length;
+
+  jogos = jogos.filter(j => j.id !== id);
+
+  if (jogos.length < tamanhoInicial) {
+    res.status(204).send();
+  } else {
+    res.status(404).json({ message: 'Jogo não encontrado para exclusão.' });
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log('Para parar o servidor, pressione Ctrl + C no terminal');
-});
-
-app.post('/api/produtos', (req, res) => { 
-  const { nome, preco } = req.body;
-  if (!nome || !preco) {
-    return res.status(400).json({ error: 'Nome e preço são obrigatórios.' });
-  }
-  const novoProduto = { id: nextId++, nome, preco };
-  produtos.push(novoProduto);
-  res.status(201).json(novoProduto);
+  console.log('Para parar o servidor, pressione Ctrl+C no terminal.');
 });
