@@ -1,10 +1,11 @@
 {
-  "name": "meu-primeiro-back",
+  "name": "api-game-workshop",
   "version": "1.0.0",
   "description": "",
-  "main": "firstApi.js",
+  "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "keywords": [],
   "author": "",
