@@ -1,109 +1,144 @@
-# API de Gerenciamento de Jogos
+API de Gerenciamento de Catálogo de Jogos
+📖 Sobre o Projeto
+Esta é uma API RESTful desenvolvida para a matéria de Backend. O projeto, que começou como uma aplicação monolítica, evoluiu para uma arquitetura de microsserviços com o objetivo de criar um sistema robusto para gerenciar jogos, usuários e seus catálogos pessoais.
 
-## 📖 Sobre o Projeto
+A aplicação permite o gerenciamento completo de jogos, o cadastro de usuários e a funcionalidade para que cada usuário monte seu próprio catálogo de jogos a partir de uma lista mestra.
 
-Esta é uma API RESTful desenvolvida para a matéria de Backend, com o objetivo de criar um sistema para gerenciar uma coleção de jogos eletrônicos. A aplicação permite aos usuários cadastrar, visualizar, atualizar e deletar jogos, além de organizá-los em listas personalizadas.
+Enunciado Original do Projeto 9: Catálogo de Jogos (Video Game Catalog API)
+Conforme sorteio feito em sala de aula, o projeto 9 ficou a cargo da equipe Amantes de Kwid:
 
-![Badge de Status do Projeto](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
+Carlos Eduardo Corleto Kolody
 
-## Enunciado do Projeto 9: Catálogo de Jogos (Video Game Catalog API)
-Conforme sorteio feito em sala de aula, o projeto 9 ficou a cargo da equipe **Amantes de Kwid**:
-- Carlos Eduardo Corleto Kolody
-- Gabriel Augusto do Vale
-- João Victor Ferrari da Silva
+Gabriel Augusto do Vale
 
-    • Descrição: Uma API para um catálogo de jogos de videogame, incluindo informações sobre plataforma e ano de lançamento.
-    • Recurso Principal: Jogo (com propriedades como id, titulo, plataforma, ano_lancamento, desenvolvedor).
-    • Exemplo de Endpoints:
-        ◦ GET /api/jogos
-        ◦ GET /api/jogos/:id
-        ◦ POST /api/jogos (requer autenticação e autorização admin)
-        ◦ PUT /api/jogos/:id (requer autenticação e autorização admin)
-        ◦ DELETE /api/jogos/:id (requer autenticação e autorização admin)
+João Victor Ferrari da Silva
 
----
+Descrição: Uma API para um catálogo de jogos de videogame, incluindo informações sobre plataforma e ano de lançamento.
 
-## 🚀 Funcionalidades Principais
+Recurso Principal: Jogo (com propriedades como id, titulo, plataforma, ano_lancamento, desenvolvedor).
 
-- **🎮 Gerenciamento de Jogos:**
-    - `POST /games`: Adiciona um novo jogo ao catálogo.
-    - `GET /games`: Lista todos os jogos disponíveis.
-    - `GET /games/{id}`: Busca um jogo específico pelo seu ID.
-    - `PUT /games/{id}`: Atualiza as informações de um jogo existente.
-    - `DELETE /games/{id}`: Remove um jogo do catálogo.
+🏛️ Arquitetura de Microsserviços
+O projeto é dividido em três serviços independentes, cada um com sua própria responsabilidade, executando em portas diferentes para garantir o desacoplamento.
 
-- **📜 Gerenciamento de Listas de Jogos:**
-    - `POST /lists`: Cria uma nova lista de jogos.
-    - `GET /lists`: Exibe todas as listas de jogos criadas.
-    - `GET /lists/{id}/games`: Exibe todos os jogos de uma lista específica.
-    - `POST /lists/{id}/games`: Adiciona um jogo a uma lista específica.
+Serviço de Games (Porta 3001): Responsável por gerenciar o catálogo mestre de todos os jogos disponíveis na plataforma.
 
----
+Serviço de Usuários (Porta 3002): Responsável por todo o ciclo de vida dos usuários, como cadastro, consulta e remoção.
 
-## 🛠️ Tecnologias Utilizadas
+Serviço de Catálogo (Porta 3003): Serviço relacional que gerencia os catálogos pessoais, conectando usuários aos jogos que eles possuem.
 
-Este projeto foi desenvolvido utilizando as seguintes tecnologias:
+🚀 Endpoints da API
+A seguir estão os principais endpoints divididos por microsserviço.
 
-* **Linguagem:** [Inserir a linguagem de programação, ex: Java, Python, JavaScript]
-* **Framework:** [Inserir o framework, ex: Spring Boot, Django, Node.js com Express]
-* **Banco de Dados:** [Inserir o banco de dados, ex: PostgreSQL, MySQL, MongoDB]
-* **Autenticação:** [Se aplicável, ex: JWT (JSON Web Token)]
-* **Outras Ferramentas:** [Se aplicável, ex: Docker, Maven, etc.]
+🎮 Serviço de Games (Rodando na porta 3001)
+GET /api/games: Lista todos os jogos do catálogo mestre.
 
----
+GET /api/games/:id: Busca um jogo específico pelo seu ID.
 
-## ⚙️ Instalação e Execução
+POST /api/games: (A ser implementado) Adiciona um novo jogo ao catálogo mestre.
 
-Siga os passos abaixo para executar o projeto em seu ambiente local.
+PUT /api/games/:id: (A ser implementado) Atualiza um jogo.
 
-**Pré-requisitos:**
+DELETE /api/games/:id: (A ser implementado) Remove um jogo.
 
-* [Listar pré-requisitos, ex: Java 11+, Node.js 14+, Docker]
-* [Outro pré-requisito, ex: Maven 3.6+]
+👤 Serviço de Usuários (Rodando na porta 3002)
+POST /api/users: Cria um novo usuário.
 
-**Passo a passo:**
+GET /api/users: Lista todos os usuários cadastrados.
 
-1.  **Clone o repositório:**
-    ```bash
-    git clone [https://github.com/seu-usuario/seu-repositorio.git](https://github.com/seu-usuario/seu-repositorio.git)
-    ```
+GET /api/users/:id: Busca um usuário específico pelo seu ID.
 
-2.  **Acesse o diretório do projeto:**
-    ```bash
-    cd seu-repositorio
-    ```
+PUT /api/users/:id: Atualiza os dados de um usuário.
 
-3.  **Instale as dependências:**
-    ```bash
-    # Exemplo para projetos Java com Maven
-    mvn install
+DELETE /api/users/:id: Remove um usuário.
 
-    # Exemplo para projetos Node.js
-    npm install
-    ```
+📜 Serviço de Catálogo (Rodando na porta 3003)
+POST /api/users/:userId/catalog: Adiciona um jogo (pelo gameId no corpo da requisição) ao catálogo de um usuário específico.
 
-4.  **Configure as variáveis de ambiente:**
-    * Renomeie o arquivo `.env.example` para `.env`.
-    * Preencha as variáveis de ambiente necessárias, como as credenciais do banco de dados.
+GET /api/users/:userId/catalog: Exibe o catálogo de jogos de um usuário.
 
-5.  **Execute a aplicação:**
-    ```bash
-    # Exemplo para projetos Spring Boot
-    mvn spring-boot:run
+DELETE /api/users/:userId/catalog/:gameId: Remove um jogo específico do catálogo de um usuário.
 
-    # Exemplo para projetos Node.js
-    npm start
-    ```
+🛠️ Tecnologias Utilizadas
+Linguagem: JavaScript
 
-Após a execução, a API estará disponível em `http://localhost:8080` (ou a porta que você configurou).
+Ambiente de Execução: Node.js
 
----
+Framework: Express.js
 
-## 🕹️ Como Usar a API
+Arquitetura: Microsserviços
 
-Você pode interagir com a API utilizando ferramentas como [Postman](https://www.postman.com/), [Insomnia](https://insomnia.rest/) ou `curl`.
+Banco de Dados: Banco de dados em memória (simulado com Arrays JS para fins de desenvolvimento)
 
-**Exemplo de requisição para listar todos os jogos:**
+⚙️ Instalação e Execução
+Para executar este projeto, você precisará iniciar cada microsserviço de forma independente.
 
-```bash
-curl -X GET http://localhost:8080/games
+Pré-requisitos:
+
+Node.js (versão 14 ou superior)
+
+Git
+
+Passo a passo:
+
+Clone o repositório:
+
+Bash
+
+git clone https://github.com/seu-usuario/API-GAME-WORKSHOP.git
+Acesse o diretório do projeto:
+
+Bash
+
+cd API-GAME-WORKSHOP
+Instale as dependências e execute cada serviço:
+
+Será necessário abrir 3 terminais diferentes, um para cada serviço.
+
+Terminal 1 - Serviço de Games:
+
+Bash
+
+cd servico-games
+npm install
+node src/app.js 
+# Servidor de Games iniciado na porta 3001
+Terminal 2 - Serviço de Usuários:
+
+Bash
+
+cd servico-usuarios
+npm install
+node src/app.js
+# Servidor de Usuários iniciado na porta 3002
+Terminal 3 - Serviço de Catálogo:
+
+Bash
+
+cd servico-catalogo
+npm install
+node src/app.js
+# Servidor de Catálogo iniciado na porta 3003
+Ao final, você terá os três serviços rodando simultaneamente em seu ambiente local.
+
+🕹️ Como Usar a API
+Você pode interagir com os microsserviços utilizando ferramentas como Postman, Insomnia ou curl. Lembre-se de apontar para a porta correta de cada serviço.
+
+Exemplo 1: Criar um novo usuário
+
+Bash
+
+curl -X POST http://localhost:3002/api/users \
+-H "Content-Type: application/json" \
+-d '{ "nome": "Joao", "email": "joao@email.com" }'
+Exemplo 2: Adicionar o jogo de ID 3 ao catálogo do usuário de ID 1
+
+Bash
+
+curl -X POST http://localhost:3003/api/users/1/catalog \
+-H "Content-Type: application/json" \
+-d '{ "gameId": 3 }'
+Exemplo 3: Visualizar o catálogo do usuário de ID 1
+
+Bash
+
+curl -X GET http://localhost:3003/api/users/1/catalog
