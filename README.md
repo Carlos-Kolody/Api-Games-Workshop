@@ -82,42 +82,37 @@ Passo a passo:
 
 Clone o repositório:
 
-Bash
+git clone [https://github.com/seu-usuario/API-GAME-WORKSHOP.git](https://github.com/seu-usuario/API-GAME-WORKSHOP.git)
 
-git clone https://github.com/seu-usuario/API-GAME-WORKSHOP.git
 Acesse o diretório do projeto:
 
-Bash
-
 cd API-GAME-WORKSHOP
+
 Instale as dependências e execute cada serviço:
 
 Será necessário abrir 3 terminais diferentes, um para cada serviço.
 
 Terminal 1 - Serviço de Games:
 
-Bash
-
 cd servico-games
 npm install
 node src/app.js 
 # Servidor de Games iniciado na porta 3001
-Terminal 2 - Serviço de Usuários:
 
-Bash
+Terminal 2 - Serviço de Usuários:
 
 cd servico-usuarios
 npm install
 node src/app.js
 # Servidor de Usuários iniciado na porta 3002
-Terminal 3 - Serviço de Catálogo:
 
-Bash
+Terminal 3 - Serviço de Catálogo:
 
 cd servico-catalogo
 npm install
 node src/app.js
 # Servidor de Catálogo iniciado na porta 3003
+
 Ao final, você terá os três serviços rodando simultaneamente em seu ambiente local.
 
 🕹️ Como Usar a API
@@ -125,20 +120,16 @@ Você pode interagir com os microsserviços utilizando ferramentas como Postman,
 
 Exemplo 1: Criar um novo usuário
 
-Bash
-
 curl -X POST http://localhost:3002/api/users \
 -H "Content-Type: application/json" \
 -d '{ "nome": "Joao", "email": "joao@email.com" }'
-Exemplo 2: Adicionar o jogo de ID 3 ao catálogo do usuário de ID 1
 
-Bash
+Exemplo 2: Adicionar o jogo de ID 3 ao catálogo do usuário de ID 1
 
 curl -X POST http://localhost:3003/api/users/1/catalog \
 -H "Content-Type: application/json" \
 -d '{ "gameId": 3 }'
-Exemplo 3: Visualizar o catálogo do usuário de ID 1
 
-Bash
+Exemplo 3: Visualizar o catálogo do usuário de ID 1
 
 curl -X GET http://localhost:3003/api/users/1/catalog
