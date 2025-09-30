@@ -1,5 +1,5 @@
-API de Gerenciamento de Catálogo de Jogos
-📖 Sobre o Projeto
+# API de Gerenciamento de Catálogo de Jogos
+# Sobre o Projeto
 Esta é uma API RESTful desenvolvida para a matéria de Backend. O projeto, que começou como uma aplicação monolítica, evoluiu para uma arquitetura de microsserviços com o objetivo de criar um sistema robusto para gerenciar jogos, usuários e seus catálogos pessoais.
 
 A aplicação permite o gerenciamento completo de jogos, o cadastro de usuários e a funcionalidade para que cada usuário monte seu próprio catálogo de jogos a partir de uma lista mestra.
@@ -17,7 +17,7 @@ Descrição: Uma API para um catálogo de jogos de videogame, incluindo informa�
 
 Recurso Principal: Jogo (com propriedades como id, titulo, plataforma, ano_lancamento, desenvolvedor).
 
-🏛️ Arquitetura de Microsserviços
+Arquitetura de Microsserviços
 O projeto é dividido em três serviços independentes, cada um com sua própria responsabilidade, executando em portas diferentes para garantir o desacoplamento.
 
 Serviço de Games (Porta 3001): Responsável por gerenciar o catálogo mestre de todos os jogos disponíveis na plataforma.
@@ -26,10 +26,10 @@ Serviço de Usuários (Porta 3002): Responsável por todo o ciclo de vida dos us
 
 Serviço de Catálogo (Porta 3003): Serviço relacional que gerencia os catálogos pessoais, conectando usuários aos jogos que eles possuem.
 
-🚀 Endpoints da API
+Endpoints da API
 A seguir estão os principais endpoints divididos por microsserviço.
 
-🎮 Serviço de Games (Rodando na porta 3001)
+Serviço de Games (Rodando na porta 3001)
 GET /api/games: Lista todos os jogos do catálogo mestre.
 
 GET /api/games/:id: Busca um jogo específico pelo seu ID.
@@ -40,7 +40,7 @@ PUT /api/games/:id: (A ser implementado) Atualiza um jogo.
 
 DELETE /api/games/:id: (A ser implementado) Remove um jogo.
 
-👤 Serviço de Usuários (Rodando na porta 3002)
+Serviço de Usuários (Rodando na porta 3002)
 POST /api/users: Cria um novo usuário.
 
 GET /api/users: Lista todos os usuários cadastrados.
@@ -51,14 +51,14 @@ PUT /api/users/:id: Atualiza os dados de um usuário.
 
 DELETE /api/users/:id: Remove um usuário.
 
-📜 Serviço de Catálogo (Rodando na porta 3003)
+Serviço de Catálogo (Rodando na porta 3003)
 POST /api/users/:userId/catalog: Adiciona um jogo (pelo gameId no corpo da requisição) ao catálogo de um usuário específico.
 
 GET /api/users/:userId/catalog: Exibe o catálogo de jogos de um usuário.
 
 DELETE /api/users/:userId/catalog/:gameId: Remove um jogo específico do catálogo de um usuário.
 
-🛠️ Tecnologias Utilizadas
+Tecnologias Utilizadas
 Linguagem: JavaScript
 
 Ambiente de Execução: Node.js
@@ -69,7 +69,7 @@ Arquitetura: Microsserviços
 
 Banco de Dados: Banco de dados em memória (simulado com Arrays JS para fins de desenvolvimento)
 
-⚙️ Instalação e Execução
+Instalação e Execução
 Para executar este projeto, você precisará iniciar cada microsserviço de forma independente.
 
 Pré-requisitos:
@@ -115,7 +115,7 @@ node src/app.js
 
 Ao final, você terá os três serviços rodando simultaneamente em seu ambiente local.
 
-🕹️ Como Usar a API
+Como Usar a API
 Você pode interagir com os microsserviços utilizando ferramentas como Postman, Insomnia ou curl. Lembre-se de apontar para a porta correta de cada serviço.
 
 Exemplo 1: Criar um novo usuário
