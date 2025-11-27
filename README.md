@@ -82,7 +82,7 @@ Passo a passo:
 
 Clone o repositório:
 
-git clone [https://github.com/seu-usuario/API-GAME-WORKSHOP.git](https://github.com/seu-usuario/API-GAME-WORKSHOP.git)
+git clone [https://github.com/seu-usuario/API-GAME-WORKSHOP.git](https://github.com/Carlos-Kolody/Api-Games-Workshop)
 
 Acesse o diretório do projeto:
 
