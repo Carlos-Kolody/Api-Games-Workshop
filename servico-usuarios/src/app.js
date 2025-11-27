@@ -1,91 +1,207 @@
-const express = require('express');
+npmrequire("dotenv").config();
+
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+
 const app = express();
 const PORT = 3000;
 
 app.use(express.json());
 
 let games = [
-  { id: 1, titulo: 'The Witcher 3: Wild Hunt', genero: 'RPG', classificacao: '16+', anoLancamento: 2015 },
-  { id: 2, titulo: 'Stardew Valley', genero: 'Simulação', classificacao: 'Livre', anoLancamento: 2016 },
-  { id: 3, titulo: 'Red Dead Redemption 2', genero: 'Ação-Aventura', classificacao: '18+', anoLancamento: 2018 },
-]; 
+  {
+    id: 1,
+    titulo: "The Witcher 3: Wild Hunt",
+    genero: "RPG",
+    classificacao: "16+",
+    anoLancamento: 2015,
+  },
+  {
+    id: 2,
+    titulo: "Stardew Valley",
+    genero: "Simulação",
+    classificacao: "Livre",
+    anoLancamento: 2016,
+  },
+  {
+    id: 3,
+    titulo: "Red Dead Redemption 2",
+    genero: "Ação-Aventura",
+    classificacao: "18+",
+    anoLancamento: 2018,
+  },
+];
 let nextGameId = 4;
 
+let users = [];
+let nextUserId = 1;
 
-let users = [
-    { id: 1, nome: 'Alice', email: 'alice@email.com', senha: '123' },
-    { id: 2, nome: 'Bob', email: 'bob@email.com', senha: '456' }
-];
-let nextUserId = 3;
+let userCatalogs = [];
+let nextCatalogId = 1;
 
+function buscaUsuarioPorId(id) {
+  return users.findIndex((user) => user.id === Number(id));
+}
 
-let userCatalogs = [
-    { id: 1, usuarioId: 1, gameId: 1 }, 
-    { id: 2, usuarioId: 1, gameId: 3 }, 
-    { id: 3, usuarioId: 2, gameId: 2 } 
-];
-let nextCatalogId = 4;
-
-function buscaGame(id) {
-  return games.findIndex(game => game.id === Number(id));
-};
-
-function buscaUsuario(id) {
-  return users.findIndex(user => user.id === Number(id));
-};
-
-app.get('/', (req, res) => {
-  res.status(200).send('API de Gerenciamento de Games no ar!');
+app.get("/", (req, res) => {
+  res.status(200).send("API de Gerenciamento de Games no ar!");
 });
 
-app.get('/api/games', (req, res) => res.status(200).json(games));
+app.get("/api/games", (req, res) => res.status(200).json(games));
 
-app.post('/api/users', (req, res) => {
+app.post("/api/register", async (req, res) => {
+  try {
     const { nome, email, senha } = req.body;
-
     if (!nome || !email || !senha) {
-        return res.status(400).json({ message: "Os campos nome, email e senha são obrigatórios." });
+      return res
+        .status(400)
+        .json({ message: "Nome, email e senha são obrigatórios." });
+    }
+    if (users.some((user) => user.email === email)) {
+      return res.status(409).json({ message: "Este email já está em uso." });
     }
 
-    if (users.some(user => user.email === email)) {
-        return res.status(409).json({ message: "Este email já está em uso." });
-    }
+    const salt = await bcrypt.genSalt(10);
+    const senhaHash = await bcrypt.hash(senha, salt);
 
-    const novoUsuario = { id: nextUserId++, nome, email, senha };
+    const novoUsuario = { id: nextUserId++, nome, email, senha: senhaHash };
     users.push(novoUsuario);
-    res.status(201).json({ message: "Usuário criado com sucesso", user: novoUsuario });
+
+    const usuarioParaRetorno = {
+      id: novoUsuario.id,
+      nome: novoUsuario.nome,
+      email: novoUsuario.email,
+    };
+    res
+      .status(201)
+      .json({
+        message: "Usuário criado com sucesso",
+        user: usuarioParaRetorno,
+      });
+  } catch (error) {
+    res.status(500).send("Erro no servidor ao registrar usuário.");
+  }
 });
 
-app.get('/api/users', (req, res) => {
-    res.status(200).json(users);
-});
-
-app.get('/api/users/:id', (req, res) => {
-    const index = buscaUsuario(req.params.id);
-    if (index === -1) {
-        return res.status(404).json({ message: "Usuário não encontrado." });
+app.post("/api/login", async (req, res) => {
+  try {
+    const { email, senha } = req.body;
+    const usuario = users.find((user) => user.email === email);
+    if (!usuario) {
+      return res.status(400).json({ message: "Email ou senha inválidos." });
     }
-    res.status(200).json(users[index]);
-});
 
-app.put('/api/users/:id', (req, res) => {
-    const index = buscaUsuario(req.params.id);
-    if (index === -1) {
-        return res.status(404).json({ message: "Usuário não encontrado." });
+    const senhaValida = await bcrypt.compare(senha, usuario.senha);
+    if (!senhaValida) {
+      return res.status(400).json({ message: "Email ou senha inválidos." });
     }
 
-    users[index].nome = req.body.nome || users[index].nome;
-    users[index].email = req.body.email || users[index].email;
-    users[index].senha = req.body.senha || users[index].senha;
+    const payload = { id: usuario.id, nome: usuario.nome };
+    const token = jwt.sign(payload, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
 
-    res.status(200).json({ message: "Usuário atualizado com sucesso", user: users[index] });
+    res.status(200).json({ message: "Login bem-sucedido!", token: token });
+  } catch (error) {
+    res.status(500).send("Erro no servidor ao fazer login.");
+  }
 });
 
-app.delete('/api/users/:id', (req, res) => {
-    const index = buscaUsuario(req.params.id);
-    if (index === -1) {
-        return res.status(404).json({ message: "Usuário não encontrado." });
-    }
-    users.splice(index, 1);
-    res.status(200).send("Usuário removido com sucesso.");
+const verifyToken = (req, res, next) => {
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
+
+  if (!token) {
+    return res
+      .status(401)
+      .json({ message: "Acesso negado. Nenhum token fornecido." });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.usuario = decoded;
+    next();
+  } catch (ex) {
+    res.status(400).json({ message: "Token inválido." });
+  }
+};
+
+app.get("/api/users/:userId/catalog", verifyToken, (req, res) => {
+  const { userId } = req.params;
+
+  if (req.usuario.id !== Number(userId)) {
+    return res
+      .status(403)
+      .json({
+        message: "Proibido. Você só pode visualizar seu próprio catálogo.",
+      });
+  }
+
+  const catalogoDoUsuario = userCatalogs.filter(
+    (item) => item.usuarioId === Number(userId)
+  );
+  const catalogoDetalhado = catalogoDoUsuario.map((item) => {
+    const gameInfo = games.find((game) => game.id === item.gameId);
+    return gameInfo;
+  });
+
+  res.status(200).json(catalogoDetalhado);
+});
+
+app.post("/api/users/:userId/catalog", verifyToken, (req, res) => {
+  const { userId } = req.params;
+  const { gameId } = req.body;
+
+  if (req.usuario.id !== Number(userId)) {
+    return res
+      .status(403)
+      .json({
+        message:
+          "Proibido. Você só pode adicionar jogos ao seu próprio catálogo.",
+      });
+  }
+
+  const novaEntrada = {
+    id: nextCatalogId++,
+    usuarioId: Number(userId),
+    gameId: Number(gameId),
+  };
+  userCatalogs.push(novaEntrada);
+  res
+    .status(201)
+    .json({
+      message: "Game adicionado ao catálogo com sucesso!",
+      entrada: novaEntrada,
+    });
+});
+
+app.delete("/api/users/:userId/catalog/:gameId", verifyToken, (req, res) => {
+  const { userId, gameId } = req.params;
+
+  if (req.usuario.id !== Number(userId)) {
+    return res
+      .status(403)
+      .json({
+        message:
+          "Proibido. Você só pode remover jogos do seu próprio catálogo.",
+      });
+  }
+
+  const index = userCatalogs.findIndex(
+    (item) =>
+      item.usuarioId === Number(userId) && item.gameId === Number(gameId)
+  );
+  if (index === -1) {
+    return res
+      .status(404)
+      .json({ message: "Game não encontrado no catálogo deste usuário." });
+  }
+
+  userCatalogs.splice(index, 1);
+  res.status(200).send("Game removido do catálogo com sucesso.");
+});
+
+app.listen(PORT, () => {
+  console.log(`Servidor rodando em http://localhost:${PORT}`);
 });
